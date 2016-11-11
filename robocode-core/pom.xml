@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.matsemann</groupId>
+    <version>1.0-SNAPSHOT</version>
+
+
+    <artifactId>robocode-core</artifactId>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>robocode</groupId>
+            <artifactId>robocode</artifactId>
+            <version>1.9.2.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/robocode.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>robocode</groupId>
+            <artifactId>robocode-core</artifactId>
+            <version>1.9.2.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/robocode.core-1.9.2.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>robocode</groupId>
+            <artifactId>robocode-battle</artifactId>
+            <version>1.9.2.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/robocode.battle-1.9.2.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>robocode</groupId>
+            <artifactId>robocode-host</artifactId>
+            <version>1.9.2.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/robocode.host-1.9.2.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>robocode</groupId>
+            <artifactId>robocode-repository</artifactId>
+            <version>1.9.2.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/robocode.repository-1.9.2.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>robocode</groupId>
+            <artifactId>robocode-sound</artifactId>
+            <version>1.9.2.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/robocode.sound-1.9.2.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>robocode</groupId>
+            <artifactId>robocode-ui.editor</artifactId>
+            <version>1.9.2.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/robocode.ui.editor-1.9.2.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>robocode</groupId>
+            <artifactId>robocode-ui</artifactId>
+            <version>1.9.2.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/robocode.ui-1.9.2.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>codesize</groupId>
+            <artifactId>codesize</artifactId>
+            <version>1.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/codesize-1.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>pico</groupId>
+            <artifactId>picocontainer</artifactId>
+            <version>2.14.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/picocontainer-2.14.2.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>robocode</groupId>
+            <artifactId>robocode-rumble</artifactId>
+            <version>1.9.2.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/roborumble.jar</systemPath>
+        </dependency>
+    </dependencies>
+
+</project>
