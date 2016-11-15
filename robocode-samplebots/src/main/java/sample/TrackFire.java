@@ -58,7 +58,7 @@ public class TrackFire extends Robot {
 			// uses a turn, which could cause us to lose track
 			// of the other robot.
 			if (getGunHeat() == 0) {
-				fire(Math.min(3 - Math.abs(bearingFromGun), getEnergy() - .1));
+//				fire(Math.min(3 - Math.abs(bearingFromGun), getEnergy() - .1));
 			}
 		} // otherwise just set the gun to turn.
 		// Note:  This will have no effect until we call scan()

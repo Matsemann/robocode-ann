@@ -3,6 +3,7 @@ package com.matsemann.bot;
 import com.matsemann.ann.MovementData;
 import com.matsemann.util.Tracker;
 import robocode.AdvancedRobot;
+import robocode.RoundEndedEvent;
 import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 
@@ -19,10 +20,15 @@ public class ObserverBot extends AdvancedRobot {
     Tracker tracker;
     MovementData data = new MovementData();
     boolean isCollecting = false;
+    long prevCollect = Long.MIN_VALUE;
+
+    private static int fileNr = 0;
 
     @Override
     public void run() {
         tracker = new Tracker(this);
+        tracker.init();
+        isCollecting = true;
 
         while (true) {
             tracker.scan();
@@ -33,12 +39,13 @@ public class ObserverBot extends AdvancedRobot {
     public void onScannedRobot(ScannedRobotEvent event) {
         tracker.onScan(event);
 
-        if (isCollecting) {
+        if (isCollecting && event.getTime() > prevCollect + 5) {
             collect(event);
         }
     }
 
     private void collect(ScannedRobotEvent event) {
+        prevCollect = event.getTime();
         double angle = event.getBearingRadians() + getHeadingRadians();
 
         double x = getX() + event.getDistance() * Math.sin(angle);
@@ -55,14 +62,35 @@ public class ObserverBot extends AdvancedRobot {
     }
 
     @Override
+    public void onRoundEnded(RoundEndedEvent event) {
+        if (isCollecting) {
+            saveData();
+            reset();
+        }
+    }
+
+
+    @Override
     public void onKeyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case VK_Q:
-                data.save(".", "test.data");
+                saveData();
+            case VK_R:
+                reset();
                 break;
             case VK_E:
                 isCollecting = !isCollecting;
                 break;
         }
+    }
+
+    private void saveData() {
+        data.save("./testsets/", "walls_" + fileNr + ".data");
+        isCollecting = false;
+        fileNr++;
+    }
+
+    private void reset() {
+        data = new MovementData();
     }
 }

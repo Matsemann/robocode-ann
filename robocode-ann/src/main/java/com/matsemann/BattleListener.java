@@ -1,6 +1,8 @@
 package com.matsemann;
 
 import robocode.control.events.*;
+import robocode.control.snapshot.IRobotSnapshot;
+import robocode.control.snapshot.ITurnSnapshot;
 
 
 class BattleListener extends BattleAdaptor {
@@ -48,6 +50,8 @@ class BattleListener extends BattleAdaptor {
 
     @Override
     public void onTurnEnded(TurnEndedEvent event) {
+        ITurnSnapshot turnSnapshot = event.getTurnSnapshot();
+        IRobotSnapshot[] robots = turnSnapshot.getRobots();
         super.onTurnEnded(event);
     }
 

@@ -2,6 +2,8 @@ package com.matsemann.ann;
 
 import org.encog.Encog;
 import org.encog.ml.data.MLDataPair;
+import org.encog.ml.data.MLDataSet;
+import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.ml.data.temporal.TemporalDataDescription;
 import org.encog.ml.data.temporal.TemporalMLDataSet;
 import org.encog.ml.data.temporal.TemporalPoint;
@@ -17,6 +19,7 @@ import org.encog.util.arrayutil.NormalizedField;
 import org.encog.util.simple.EncogUtility;
 
 import java.io.File;
+import java.util.List;
 
 import static com.matsemann.ann.BasicAnn.*;
 
@@ -28,65 +31,38 @@ public class Trainer {
 
     public static void main(String[] args) {
 
-        MovementData movementData = new MovementData();
-        movementData.load("./test.data");
+        BasicMLDataSet trainingData = new BasicMLDataSet();
 
-//        double lowest = 10000, highest = -10000;
-//        for (MovementData.Movement m : movementData.movements) {
-//            if (m.velocity < lowest) {
-//                lowest = m.velocity;
-//            } else if (m.velocity > highest) {
-//                highest = m.velocity;
-//            }
-//        }
-//        System.out.println(lowest + " " + highest);
-
-        TemporalMLDataSet dataSet = createDataSet();
-
-        for (MovementData.Movement m : movementData.movements) {
-
-            TemporalPoint tmp = new TemporalPoint(4);
-            tmp.setData(new double[]{
-                    xNorm.normalize(m.x),
-                    yNorm.normalize(m.y),
-                    headNorm.normalize(m.heading),
-                    velNorm.normalize((m.velocity))
-            });
-            dataSet.getPoints().add(tmp);
+        for (int i = 0; i < 10; i++) {
+            List<MLDataPair> mlDataPairs = loadFromFile("././testsets/walls_" + i + ".data");
+            for (MLDataPair pair : mlDataPairs) {
+                trainingData.add(pair);
+            }
         }
 
-        dataSet.generate();
-        int inputSize = dataSet.getInputSize();
-        int outputSize = dataSet.getIdealSize();
+
+        int inputSize = trainingData.getInputSize();
+        int outputSize = trainingData.getIdealSize();
 
 
+        BasicNetwork network = createNetwork(inputSize, outputSize);
+
+        ResilientPropagation train = new ResilientPropagation(network, trainingData);
+        EncogUtility.trainToError(train, 0.001);
+
+        EncogDirectoryPersistence.saveObject(new File(FILE_NAME), network);
+
+        Encog.getInstance().shutdown();
+    }
+
+    public static BasicNetwork createNetwork(int inputSize, int outputSize) {
         BasicNetwork network = new BasicNetwork();
         network.addLayer(new BasicLayer(inputSize));
         network.addLayer(new BasicLayer(30));
         network.addLayer(new BasicLayer(outputSize));
         network.getStructure().finalizeStructure();
         network.reset();
-
-// out :[0.7652505899324694, 0.5521298086217646, 0.7684006412462274, 0.5497299515853055, 0.7693786459873886, 0.5568560873022652, 0.7791310224316942, 0.5566603654727099, 0.7773421402520905, 0.5588592359271354]
-
-
-
-//        MLDataPair mlDataPair = dataSet.get(0);
-//        BasicNeuralData out = dataSet.generateOutputNeuralData(1);
-//        BasicNeuralData in = dataSet.generateInputNeuralData(1);
-
-
-//        mlMethodFactory.create()
-//        mlMethodFactory.create()
-
-
-        ResilientPropagation train = new ResilientPropagation(network, dataSet);
-        EncogUtility.trainToError(train, 0.0001);
-
-        EncogDirectoryPersistence.saveObject(new File(FILE_NAME), network);
-
-        Encog.getInstance().shutdown();
-//        System.out.println(movementData.movements.size());
+        return network;
     }
 
     public static TemporalMLDataSet createDataSet() {
@@ -101,5 +77,33 @@ public class Trainer {
         dataSet.addDescription(heading);
         dataSet.addDescription(velocity);
         return dataSet;
+    }
+
+    public static List<MLDataPair> loadFromFile(String fileName) {
+
+        MovementData movementData = new MovementData();
+        movementData.load(fileName);
+
+        TemporalMLDataSet dataSet = createDataSet();
+
+        for (MovementData.Movement m : movementData.movements) {
+            TemporalPoint tmp = createTemporalPoint(m);
+            dataSet.getPoints().add(tmp);
+        }
+
+        dataSet.generate();
+
+        return dataSet.getData();
+    }
+
+    public static TemporalPoint createTemporalPoint(MovementData.Movement m) {
+        TemporalPoint tmp = new TemporalPoint(4);
+        tmp.setData(new double[]{
+                xNorm.normalize(m.x),
+                yNorm.normalize(m.y),
+                headNorm.normalize(m.heading),
+                velNorm.normalize((m.velocity))
+        });
+        return tmp;
     }
 }

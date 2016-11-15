@@ -1,10 +1,8 @@
 package com.matsemann;
 
+import net.sf.robocode.battle.Battle;
 import net.sf.robocode.security.HiddenAccess;
-import robocode.control.BattleSpecification;
-import robocode.control.BattlefieldSpecification;
-import robocode.control.RobocodeEngine;
-import robocode.control.RobotSpecification;
+import robocode.control.*;
 
 import java.io.File;
 import java.net.URL;
@@ -24,11 +22,13 @@ public class Starter {
         engine.addBattleListener(new BattleListener());
         engine.setVisible(true);
 
-        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.ObserverBot*, sample.Interactive");
-//        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.TestBot*, sample.Interactive");
+//        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.ObserverBot*, sample.Walls");
+//        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.LiveAnnTestBot*, sample.Crazy");
+        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnTestBot*, sample.Walls");
 
         BattlefieldSpecification battleField = new BattlefieldSpecification();
         BattleSpecification battle = new BattleSpecification(50, battleField, robots);
+
         engine.runBattle(battle);
 
 

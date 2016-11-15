@@ -3,8 +3,6 @@ package com.matsemann.bot;
 import com.matsemann.ann.BasicAnn;
 import com.matsemann.ann.MovementData;
 import com.matsemann.util.Tracker;
-import org.encog.neural.networks.BasicNetwork;
-import org.encog.neural.networks.layers.BasicLayer;
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
 import robocode.StatusEvent;
@@ -16,22 +14,19 @@ import java.util.List;
 import static com.matsemann.ann.BasicAnn.WINDOW_SIZE;
 
 /**
- * Created by mats kruger svensson on 08/11/16.
+ * Created by mats kruger svensson on 12/11/16.
  */
-public class AnnTestBot extends AdvancedRobot {
+public class LiveAnnTestBot extends AdvancedRobot {
 
 
-    private BasicAnn ann;
-    private MovementData movementData;
+    private static BasicAnn ann=  new BasicAnn();
+    private static MovementData movementData = new MovementData();
     Tracker tracker;
 
     List<BasicAnn.Prediction> predictions = new ArrayList<>();
     long prevCollect = Long.MIN_VALUE;
 
-
-    public AnnTestBot() {
-        ann = new BasicAnn();
-        movementData = new MovementData();
+    public LiveAnnTestBot() {
         tracker = new Tracker(this);
     }
 
@@ -58,6 +53,8 @@ public class AnnTestBot extends AdvancedRobot {
 
             MovementData.Movement m = new MovementData.Movement(event.getTime(), x, y, event.getHeadingRadians(), event.getVelocity());
             movementData.add(m);
+
+            ann.train(movementData.movements);
         }
     }
 

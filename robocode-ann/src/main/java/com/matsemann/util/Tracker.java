@@ -10,10 +10,13 @@ public class Tracker {
     private AdvancedRobot robot;
 
     public Tracker(AdvancedRobot robot) {
+        this.robot = robot;
+    }
+
+    public void init() {
         robot.setAdjustRadarForRobotTurn(true);
         robot.setAdjustGunForRobotTurn(true);
         robot.setAdjustRadarForGunTurn(true);
-        this.robot = robot;
     }
 
     public void scan() {
