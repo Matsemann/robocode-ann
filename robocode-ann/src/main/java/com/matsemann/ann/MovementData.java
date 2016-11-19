@@ -44,17 +44,19 @@ public class MovementData {
 
     public static class Movement implements Serializable {
         public long tick;
-        public double x, y, heading, velocity;
+        public double x, y, heading, velocity, myX, myY;
 
         public Movement() {
         }
 
-        public Movement(long tick, double x, double y, double heading, double velocity) {
+        public Movement(long tick, double x, double y, double heading, double velocity, double myX, double myY) {
             this.tick = tick;
             this.x = x;
             this.y = y;
             this.heading = heading;
             this.velocity = velocity;
+            this.myX = myX;
+            this.myY = myY;
         }
     }
 

@@ -1,5 +1,6 @@
 package com.matsemann.bot;
 
+import com.matsemann.ann.BasicAnn;
 import com.matsemann.ann.MovementData;
 import com.matsemann.util.Tracker;
 import robocode.AdvancedRobot;
@@ -10,6 +11,7 @@ import robocode.util.Utils;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+import static com.matsemann.ann.BasicAnn.TICK_STEP;
 import static java.awt.event.KeyEvent.*;
 
 /**
@@ -39,7 +41,7 @@ public class ObserverBot extends AdvancedRobot {
     public void onScannedRobot(ScannedRobotEvent event) {
         tracker.onScan(event);
 
-        if (isCollecting && event.getTime() > prevCollect + 5) {
+        if (isCollecting && event.getTime() >= prevCollect + TICK_STEP) {
             collect(event);
         }
     }
@@ -51,13 +53,13 @@ public class ObserverBot extends AdvancedRobot {
         double x = getX() + event.getDistance() * Math.sin(angle);
         double y = getY() + event.getDistance() * Math.cos(angle);
 
-        data.add(new MovementData.Movement(event.getTime(), x, y, event.getHeadingRadians(), event.getVelocity()));
+        data.add(new MovementData.Movement(event.getTime(), x, y, event.getHeadingRadians(), event.getVelocity(), getX(), getY()));
     }
 
     @Override
     public void onPaint(Graphics2D g) {
         for (MovementData.Movement m : data.movements) {
-            g.fillOval((int) m.x, (int) m.y, 7, 7);
+            g.fillOval((int) m.x, (int) m.y, 25, 25);
         }
     }
 
@@ -85,7 +87,7 @@ public class ObserverBot extends AdvancedRobot {
     }
 
     private void saveData() {
-        data.save("./testsets/", "walls_" + fileNr + ".data");
+        data.save("./testsets/", "steffen_" + fileNr + ".data");
         isCollecting = false;
         fileNr++;
     }

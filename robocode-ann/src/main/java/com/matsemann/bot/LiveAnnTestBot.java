@@ -51,7 +51,7 @@ public class LiveAnnTestBot extends AdvancedRobot {
             double x = getX() + event.getDistance() * Math.sin(angle);
             double y = getY() + event.getDistance() * Math.cos(angle);
 
-            MovementData.Movement m = new MovementData.Movement(event.getTime(), x, y, event.getHeadingRadians(), event.getVelocity());
+            MovementData.Movement m = new MovementData.Movement(event.getTime(), x, y, event.getHeadingRadians(), event.getVelocity(), getX(), getY());
             movementData.add(m);
 
             ann.train(movementData.movements);
@@ -62,8 +62,8 @@ public class LiveAnnTestBot extends AdvancedRobot {
     public void onStatus(StatusEvent e) {
         if (movementData.movements.size() > WINDOW_SIZE) {
             List<MovementData.Movement> movements = movementData.movements.subList(movementData.movements.size() - WINDOW_SIZE, movementData.movements.size());
-            List<BasicAnn.Prediction> pres = ann.getPredictions(movements);
-            predictions = pres;
+//            List<BasicAnn.Prediction> pres = ann.getPredictions(movements);
+//            predictions = pres;
         }
     }
 

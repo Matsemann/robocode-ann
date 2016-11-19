@@ -13,6 +13,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.matsemann.ann.BasicAnn.TICK_STEP;
 import static com.matsemann.ann.BasicAnn.WINDOW_SIZE;
 
 /**
@@ -21,13 +22,13 @@ import static com.matsemann.ann.BasicAnn.WINDOW_SIZE;
 public class AnnTestBot extends AdvancedRobot {
 
 
-    private BasicAnn ann;
-    private MovementData movementData;
     Tracker tracker;
-
-    List<BasicAnn.Prediction> predictions = new ArrayList<>();
+    private MovementData movementData;
     long prevCollect = Long.MIN_VALUE;
 
+    private BasicAnn ann;
+    List<BasicAnn.Prediction> predictions = new ArrayList<>();
+    long prevPredict = Long.MIN_VALUE;
 
     public AnnTestBot() {
         ann = new BasicAnn();
@@ -48,7 +49,7 @@ public class AnnTestBot extends AdvancedRobot {
     public void onScannedRobot(ScannedRobotEvent event) {
         tracker.onScan(event);
 
-        if (event.getTime() > prevCollect + 5) {
+        if (event.getTime() >= prevCollect + TICK_STEP) {
             prevCollect = event.getTime();
 
             double angle = event.getBearingRadians() + getHeadingRadians();
@@ -56,25 +57,38 @@ public class AnnTestBot extends AdvancedRobot {
             double x = getX() + event.getDistance() * Math.sin(angle);
             double y = getY() + event.getDistance() * Math.cos(angle);
 
-            MovementData.Movement m = new MovementData.Movement(event.getTime(), x, y, event.getHeadingRadians(), event.getVelocity());
+            MovementData.Movement m = new MovementData.Movement(event.getTime(), x, y, event.getHeadingRadians(), event.getVelocity(), getX(), getY());
             movementData.add(m);
         }
     }
 
     @Override
     public void onStatus(StatusEvent e) {
-        if (movementData.movements.size() > WINDOW_SIZE) {
+        if (movementData.movements.size() > WINDOW_SIZE && prevPredict != prevCollect) {
+            System.out.println("new prediction");
+            prevPredict = prevCollect;
             List<MovementData.Movement> movements = movementData.movements.subList(movementData.movements.size() - WINDOW_SIZE, movementData.movements.size());
-            List<BasicAnn.Prediction> pres = ann.getPredictions(movements);
-            predictions = pres;
+
+            BasicAnn.Prediction prediction = ann.getPrediction(movements);
+            if (prediction != null) {
+                System.out.println(prediction);
+                predictions.add(prediction);
+            }
+
+            if (predictions.size() > 5) {
+                predictions.remove(0);
+            }
+
         }
     }
 
     @Override
     public void onPaint(Graphics2D g) {
         g.setColor(Color.RED);
+        long now = getTime();
         for (BasicAnn.Prediction p : predictions) {
-            g.fillOval((int) p.x, (int) p.y, 7, 7);
+            int size = (int) (p.tick - now)/2 + 5;
+            g.fillOval((int) p.x, (int) p.y, size, size);
         }
 
         if (movementData.movements.size() > WINDOW_SIZE) {

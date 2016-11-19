@@ -22,12 +22,12 @@ public class Starter {
         engine.addBattleListener(new BattleListener());
         engine.setVisible(true);
 
-//        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.ObserverBot*, sample.Walls");
+        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.ObserverBot*, steffen.PredictionBot*");
+//        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnTestBot*, steffen.PredictionBot*");
 //        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.LiveAnnTestBot*, sample.Crazy");
-        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnTestBot*, sample.Walls");
 
         BattlefieldSpecification battleField = new BattlefieldSpecification();
-        BattleSpecification battle = new BattleSpecification(50, battleField, robots);
+        BattleSpecification battle = new BattleSpecification(100, battleField, robots);
 
         engine.runBattle(battle);
 
