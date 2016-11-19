@@ -22,7 +22,7 @@ public class Starter {
         engine.addBattleListener(new BattleListener());
         engine.setVisible(true);
 
-        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.ObserverBot*, steffen.PredictionBot*");
+        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnTestBot*, steffen.PredictionBot*");
 //        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnTestBot*, steffen.PredictionBot*");
 //        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.LiveAnnTestBot*, sample.Crazy");
 

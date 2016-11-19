@@ -20,9 +20,6 @@ import static com.matsemann.ann.Trainer.createInput;
 import static com.matsemann.ann.Trainer.createNetwork;
 import static com.matsemann.ann.Trainer.createTemporalPoint;
 
-/**
- * Created by mats kruger svensson on 08/11/16.
- */
 public class BasicAnn {
 
     public static final int WINDOW_SIZE = 10;
@@ -128,7 +125,8 @@ public class BasicAnn {
     }
 
     public static class Prediction {
-        public double x, y, tick;
+        public double x, y;
+        public long tick;
 
         public Prediction(double x, double y, long tick) {
             this.x = x;

@@ -6,6 +6,7 @@ import com.matsemann.util.Tracker;
 import robocode.AdvancedRobot;
 import robocode.RoundEndedEvent;
 import robocode.ScannedRobotEvent;
+import robocode.StatusEvent;
 import robocode.util.Utils;
 
 import java.awt.*;
@@ -31,10 +32,6 @@ public class ObserverBot extends AdvancedRobot {
         tracker = new Tracker(this);
         tracker.init();
         isCollecting = true;
-
-        while (true) {
-            tracker.scan();
-        }
     }
 
     @Override
@@ -44,6 +41,12 @@ public class ObserverBot extends AdvancedRobot {
         if (isCollecting && event.getTime() >= prevCollect + TICK_STEP) {
             collect(event);
         }
+    }
+
+    @Override
+    public void onStatus(StatusEvent e) {
+        tracker.execute();
+        execute();
     }
 
     private void collect(ScannedRobotEvent event) {

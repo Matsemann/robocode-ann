@@ -2,6 +2,7 @@ package com.matsemann.bot;
 
 import com.matsemann.ann.BasicAnn;
 import com.matsemann.ann.MovementData;
+import com.matsemann.util.Gun;
 import com.matsemann.util.Tracker;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
@@ -30,8 +31,11 @@ public class AnnTestBot extends AdvancedRobot {
     List<BasicAnn.Prediction> predictions = new ArrayList<>();
     long prevPredict = Long.MIN_VALUE;
 
+    private Gun gun;
+
     public AnnTestBot() {
         ann = new BasicAnn();
+        gun = new Gun(this);
         movementData = new MovementData();
         tracker = new Tracker(this);
     }
@@ -39,10 +43,6 @@ public class AnnTestBot extends AdvancedRobot {
     @Override
     public void run() {
         tracker.init();
-
-        while (true) {
-            tracker.scan();
-        }
     }
 
     @Override
@@ -64,6 +64,7 @@ public class AnnTestBot extends AdvancedRobot {
 
     @Override
     public void onStatus(StatusEvent e) {
+        tracker.execute();
         if (movementData.movements.size() > WINDOW_SIZE && prevPredict != prevCollect) {
             System.out.println("new prediction");
             prevPredict = prevCollect;
@@ -78,8 +79,13 @@ public class AnnTestBot extends AdvancedRobot {
             if (predictions.size() > 5) {
                 predictions.remove(0);
             }
-
         }
+        if (!predictions.isEmpty()) {
+            BasicAnn.Prediction lastPrediction = predictions.get(predictions.size() - 1);
+            gun.pointAndShoot(lastPrediction);
+        }
+
+        execute();
     }
 
     @Override

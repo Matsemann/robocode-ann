@@ -1,6 +1,7 @@
 package com.matsemann.util;
 
 import robocode.AdvancedRobot;
+import robocode.Rules;
 import robocode.ScannedRobotEvent;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
@@ -8,6 +9,7 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
 public class Tracker {
 
     private AdvancedRobot robot;
+    private boolean scanHit;
 
     public Tracker(AdvancedRobot robot) {
         this.robot = robot;
@@ -20,22 +22,28 @@ public class Tracker {
     }
 
     public void scan() {
-        robot.turnRadarRight(20);
+        robot.setTurnRadarRight(Rules.GUN_TURN_RATE);
+    }
+
+    public void execute() {
+        if (!scanHit) {
+            scan();
+        }
+        scanHit = false;
     }
 
     public void onScan(ScannedRobotEvent e) {
-        // Calculate exact location of the robot
         double absoluteBearing = robot.getHeading() + e.getBearing();
         double bearingFromGun = normalRelativeAngleDegrees(absoluteBearing - robot.getRadarHeading());
 
-
-        robot.turnRadarRight(bearingFromGun);
-
-        // Generates another scan event if we see a robot.
-        // We only need to call this if the gun (and therefore radar)
-        // are not turning.  Otherwise, scan is called automatically.
-        if (bearingFromGun == 0) {
-            robot.scan();
+        // Some wiggle
+        if (bearingFromGun > 0) {
+            bearingFromGun += 5;
+        } else {
+            bearingFromGun -= 5;
         }
+
+        robot.setTurnRadarRight(bearingFromGun);
+        scanHit = true;
     }
 }
