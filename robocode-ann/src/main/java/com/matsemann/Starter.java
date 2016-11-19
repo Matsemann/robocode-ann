@@ -1,5 +1,6 @@
 package com.matsemann;
 
+import com.matsemann.bot.ObserverBot;
 import net.sf.robocode.battle.Battle;
 import net.sf.robocode.security.HiddenAccess;
 import robocode.control.*;
@@ -12,8 +13,7 @@ import java.net.URL;
  */
 public class Starter {
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws Exception {
         RobocodeEngine.setLogErrorsEnabled(true);
         RobocodeEngine.setLogMessagesEnabled(true);
 //        RobocodeEngine engine = new RobocodeEngine(new BattleListener());
@@ -22,7 +22,7 @@ public class Starter {
         engine.addBattleListener(new BattleListener());
         engine.setVisible(true);
 
-        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnTestBot*, steffen.PredictionBot*");
+        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.ObserverBot*, sample.Walls");
 //        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnTestBot*, steffen.PredictionBot*");
 //        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.LiveAnnTestBot*, sample.Crazy");
 

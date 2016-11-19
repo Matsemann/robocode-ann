@@ -5,7 +5,7 @@ import robocode.control.snapshot.IRobotSnapshot;
 import robocode.control.snapshot.ITurnSnapshot;
 
 
-class BattleListener extends BattleAdaptor {
+public class BattleListener extends BattleAdaptor {
     @Override
     public void onBattleStarted(BattleStartedEvent event) {
         System.out.println("battle started");

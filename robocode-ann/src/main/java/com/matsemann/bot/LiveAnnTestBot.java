@@ -32,7 +32,6 @@ public class LiveAnnTestBot extends AdvancedRobot {
 
     @Override
     public void run() {
-        tracker.init();
 
         while (true) {
             tracker.scan();

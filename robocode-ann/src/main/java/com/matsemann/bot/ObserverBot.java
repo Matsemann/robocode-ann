@@ -1,12 +1,12 @@
 package com.matsemann.bot;
 
+import com.matsemann.Starter;
 import com.matsemann.ann.BasicAnn;
 import com.matsemann.ann.MovementData;
 import com.matsemann.util.Tracker;
-import robocode.AdvancedRobot;
-import robocode.RoundEndedEvent;
-import robocode.ScannedRobotEvent;
-import robocode.StatusEvent;
+import com.matsemann.util.Vector;
+import com.matsemann.util.WallDistance;
+import robocode.*;
 import robocode.util.Utils;
 
 import java.awt.*;
@@ -25,13 +25,24 @@ public class ObserverBot extends AdvancedRobot {
     boolean isCollecting = false;
     long prevCollect = Long.MIN_VALUE;
 
-    private static int fileNr = 0;
+    public static int fileNr = 0;
+
+    Vector closestWall = new Vector();
+    Vector behindWall = new Vector();
+
+
+    public ObserverBot() {
+        tracker = new Tracker(this);
+        isCollecting = false;
+    }
 
     @Override
     public void run() {
-        tracker = new Tracker(this);
-        tracker.init();
-        isCollecting = true;
+        tracker.setup();
+
+        while (true) {
+            execute();
+        }
     }
 
     @Override
@@ -45,8 +56,12 @@ public class ObserverBot extends AdvancedRobot {
 
     @Override
     public void onStatus(StatusEvent e) {
+        setTurnRight(20);
+        setAhead(10);
         tracker.execute();
-        execute();
+        closestWall = WallDistance.pointAtClosestWall(getX(), getY(), Math.PI / 2 - getHeadingRadians(), getBattleFieldWidth(), getBattleFieldHeight());
+        behindWall = WallDistance.pointAtClosestWall(getX(), getY(), Math.PI / 2 - getHeadingRadians() + Math.PI, getBattleFieldWidth(), getBattleFieldHeight());
+        setDebugProperty("wall", closestWall.x + ", " + closestWall.y);
     }
 
     private void collect(ScannedRobotEvent event) {
@@ -61,9 +76,16 @@ public class ObserverBot extends AdvancedRobot {
 
     @Override
     public void onPaint(Graphics2D g) {
+        g.setColor(Color.CYAN);
         for (MovementData.Movement m : data.movements) {
             g.fillOval((int) m.x, (int) m.y, 25, 25);
         }
+        g.setColor(Color.GREEN);
+        g.drawLine((int) getX(), (int) getY(), (int) closestWall.x, (int) closestWall.y);
+        g.fillOval((int)closestWall.x - 12, (int)closestWall.y - 12, 25, 25);
+        g.setColor(Color.RED);
+        g.drawLine((int) getX(), (int) getY(), (int) behindWall.x, (int) behindWall.y);
+        g.fillOval((int)behindWall.x - 12, (int)behindWall.y - 12, 25, 25);
     }
 
     @Override
@@ -73,7 +95,6 @@ public class ObserverBot extends AdvancedRobot {
             reset();
         }
     }
-
 
     @Override
     public void onKeyPressed(KeyEvent e) {

@@ -3,6 +3,7 @@ package com.matsemann.util;
 import robocode.AdvancedRobot;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
+import robocode.util.Utils;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
@@ -10,13 +11,13 @@ public class Tracker {
 
     private AdvancedRobot robot;
     private boolean scanHit;
+    int wiggle = 10;
 
     public Tracker(AdvancedRobot robot) {
         this.robot = robot;
     }
 
-    public void init() {
-        robot.setAdjustRadarForRobotTurn(true);
+    public void setup() {
         robot.setAdjustGunForRobotTurn(true);
         robot.setAdjustRadarForGunTurn(true);
     }
@@ -33,17 +34,12 @@ public class Tracker {
     }
 
     public void onScan(ScannedRobotEvent e) {
-        double absoluteBearing = robot.getHeading() + e.getBearing();
-        double bearingFromGun = normalRelativeAngleDegrees(absoluteBearing - robot.getRadarHeading());
+        double angleToRobot = robot.getHeading() + e.getBearing();
+        double angleForRadar = normalRelativeAngleDegrees(angleToRobot - robot.getRadarHeading());
 
-        // Some wiggle
-        if (bearingFromGun > 0) {
-            bearingFromGun += 5;
-        } else {
-            bearingFromGun -= 5;
-        }
+        angleForRadar += angleForRadar > 0 ? wiggle : -wiggle;
 
-        robot.setTurnRadarRight(bearingFromGun);
+        robot.setTurnRadarRight(angleForRadar);
         scanHit = true;
     }
 }

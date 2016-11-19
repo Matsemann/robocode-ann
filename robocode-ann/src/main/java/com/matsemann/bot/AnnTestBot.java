@@ -4,11 +4,11 @@ import com.matsemann.ann.BasicAnn;
 import com.matsemann.ann.MovementData;
 import com.matsemann.util.Gun;
 import com.matsemann.util.Tracker;
-import org.encog.neural.networks.BasicNetwork;
-import org.encog.neural.networks.layers.BasicLayer;
+import com.matsemann.util.RobotPainter;
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
 import robocode.StatusEvent;
+import robocode.WinEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -32,17 +32,18 @@ public class AnnTestBot extends AdvancedRobot {
     long prevPredict = Long.MIN_VALUE;
 
     private Gun gun;
+    private RobotPainter robotPainter;
 
     public AnnTestBot() {
         ann = new BasicAnn();
         gun = new Gun(this);
         movementData = new MovementData();
         tracker = new Tracker(this);
+        robotPainter = new RobotPainter(this);
     }
 
     @Override
     public void run() {
-        tracker.init();
     }
 
     @Override
@@ -64,6 +65,8 @@ public class AnnTestBot extends AdvancedRobot {
 
     @Override
     public void onStatus(StatusEvent e) {
+        robotPainter.paint();
+
         tracker.execute();
         if (movementData.movements.size() > WINDOW_SIZE && prevPredict != prevCollect) {
             System.out.println("new prediction");
@@ -89,12 +92,17 @@ public class AnnTestBot extends AdvancedRobot {
     }
 
     @Override
+    public void onWin(WinEvent event) {
+        robotPainter.celebrate();
+    }
+
+    @Override
     public void onPaint(Graphics2D g) {
         g.setColor(Color.RED);
         long now = getTime();
         for (BasicAnn.Prediction p : predictions) {
             int size = (int) (p.tick - now)/2 + 5;
-            g.fillOval((int) p.x, (int) p.y, size, size);
+            g.fillOval((int) p.x - size/2, (int) p.y - size/2, size, size);
         }
 
         if (movementData.movements.size() > WINDOW_SIZE) {
@@ -103,7 +111,7 @@ public class AnnTestBot extends AdvancedRobot {
             g.setColor(Color.BLUE);
 
             for (MovementData.Movement m : movements) {
-                g.fillOval((int) m.x, (int) m.y, 7, 7);
+                g.fillOval((int) m.x -3, (int) m.y -3, 7, 7);
             }
         }
     }
