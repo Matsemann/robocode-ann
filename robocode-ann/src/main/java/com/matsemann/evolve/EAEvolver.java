@@ -19,12 +19,12 @@ public class EAEvolver {
 //        EvolutionaryAlgorithm ea = new TrainEA(new );
 
         RobotEvaluator evaluator = new RobotEvaluator();
-        MLMethodGeneticAlgorithm train = new MLMethodGeneticAlgorithm(new MyMethodFactory(), evaluator, 30);
+        MLMethodGeneticAlgorithm train = new MLMethodGeneticAlgorithm(new MyMethodFactory(), evaluator, 25);
 
 
 //        train.setThreadCount(1);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 40; i++) {
             System.out.println("----------------------------");
             System.out.println("----------------------------");
             System.out.println("NEW ITERATION: " + (i + 1));

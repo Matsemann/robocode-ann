@@ -84,22 +84,27 @@ public class RobotEvaluator implements CalculateScore {
         new MovementAnn(network).save();
 
         RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnMovementBot*, sample.Walls");
-
         BattlefieldSpecification battleField = new BattlefieldSpecification();
-        BattleSpecification battle = new BattleSpecification(2, battleField, robots);
-
+        BattleSpecification battle = new BattleSpecification(1, battleField, robots);
         engine.runBattle(battle);
         engine.waitTillBattleOver();
-
         MovementScore results = MovementScore.load();
         double score = results.score;
-        
-        timeUsed.add(System.currentTimeMillis() - start);
         ticks += results.ticks;
-        
+
+        RobotSpecification[] robots2 = engine.getLocalRepository("com.matsemann.bot.AnnMovementBot*, sample.Crazy");
+        BattlefieldSpecification battleField2 = new BattlefieldSpecification();
+        BattleSpecification battle2 = new BattleSpecification(1, battleField2, robots2);
+        engine.runBattle(battle2);
+        engine.waitTillBattleOver();
+        MovementScore results2 = MovementScore.load();
+        double score2 = results2.score;
+        ticks += results2.ticks;
+
+        timeUsed.add(System.currentTimeMillis() - start);
 //        System.out.println("for round" + count++);
 //        System.out.println("got score: " + score);
-        return score;
+        return score + score2;
     }
 
     @Override
@@ -112,30 +117,5 @@ public class RobotEvaluator implements CalculateScore {
         return true;
     }
 
-
-    public static class MovementScore implements Serializable {
-        public double score;
-        public double ticks;
-
-        public void save() {
-            try {
-                ObjectOutput out = new ObjectOutputStream(new FileOutputStream("./data/score.bin"));
-                out.writeObject(this);
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //Loads data from a file serialized by Java built-in serialization.
-        public static MovementScore load() {
-            try {
-                ObjectInput in = new ObjectInputStream(new FileInputStream("./data/score.bin"));
-                return (MovementScore) in.readObject();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 
 }

@@ -1,7 +1,7 @@
 package com.matsemann.bot;
 
 import com.matsemann.evolve.MovementAnn;
-import com.matsemann.evolve.RobotEvaluator.MovementScore;
+import com.matsemann.evolve.MovementScore;
 import com.matsemann.util.Tracker;
 import com.matsemann.util.Vector;
 import com.matsemann.util.WallDistance;
@@ -10,6 +10,8 @@ import robocode.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.matsemann.evolve.MovementScore.save;
 
 public class AnnMovementBot extends AdvancedRobot {
 
@@ -107,8 +109,6 @@ public class AnnMovementBot extends AdvancedRobot {
         setTurnRightRadians(action[0]);
         setAhead(action[1]);
 
-
-
         if (lastPos != null) {
             movedDistance += lastPos.sub(pos).getLength();
         }
@@ -165,14 +165,14 @@ public class AnnMovementBot extends AdvancedRobot {
 //        double totalScore = (error + wallTouches*250) / (avgSpeed / 2);
         double totalScore = error;
 
-        if (avgSpeed < 2.5) {
-            totalScore = totalScore * 10;
+        if (avgSpeed < 3) {
+            totalScore = totalScore * (10 / (avgSpeed + 0.1));
         }
 
         MovementScore score = new MovementScore();
         score.score = totalScore;
         score.ticks = ticks;
-        score.save();
+        save(score);
 
         System.out.println("saved");
 

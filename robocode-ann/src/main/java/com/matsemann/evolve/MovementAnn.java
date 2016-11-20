@@ -54,24 +54,24 @@ public class MovementAnn {
     }
 
     public void load() {
-        try {
-            ObjectInput in = new ObjectInputStream(new FileInputStream(FILE_NAME));
-            network = (MLRegression) in.readObject();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-//        network = (NEATNetwork) EncogDirectoryPersistence.loadObject(new File(FILE_NAME));
+//        try {
+//            ObjectInput in = new ObjectInputStream(new FileInputStream(FILE_NAME));
+//            network = (MLRegression) in.readObject();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+        network = (MLRegression) EncogDirectoryPersistence.loadObject(new File(FILE_NAME));
     }
 
     public void save() {
 
-            try {
-                ObjectOutput out = new ObjectOutputStream(new FileOutputStream(FILE_NAME));
-                out.writeObject(network);
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-//        EncogDirectoryPersistence.saveObject(new File(FILE_NAME), network);
+//            try {
+//                ObjectOutput out = new ObjectOutputStream(new FileOutputStream(FILE_NAME));
+//                out.writeObject(network);
+//                out.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+        EncogDirectoryPersistence.saveObject(new File(FILE_NAME), network);
     }
 }
