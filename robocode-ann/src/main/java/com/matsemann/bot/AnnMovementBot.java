@@ -2,6 +2,7 @@ package com.matsemann.bot;
 
 import com.matsemann.evolve.MovementAnn;
 import com.matsemann.evolve.MovementScore;
+import com.matsemann.util.DebugPainter;
 import com.matsemann.util.Tracker;
 import com.matsemann.util.Vector;
 import com.matsemann.util.WallDistance;
@@ -19,6 +20,7 @@ public class AnnMovementBot extends AdvancedRobot {
     private final MovementAnn network;
 
     Tracker tracker;
+    DebugPainter debugPainter;
 
     static int wallTouches;
     static List<Double> distances = new ArrayList<>();
@@ -41,6 +43,7 @@ public class AnnMovementBot extends AdvancedRobot {
         network.load();
 
         tracker = new Tracker(this);
+        debugPainter = new DebugPainter(this, frontWAll, behindWall, lastSeen);
     }
 
     @Override
@@ -78,8 +81,8 @@ public class AnnMovementBot extends AdvancedRobot {
 //        double distance = Math.sqrt( Math.pow(getX() - lastSeenX, 2) + Math.pow(getY() - lastSeenY, 2));
 
 
-        frontWAll = WallDistance.pointAtClosestWall(getX(), getY(), Math.PI / 2 - getHeadingRadians(), getBattleFieldWidth(), getBattleFieldHeight());
-        behindWall = WallDistance.pointAtClosestWall(getX(), getY(), Math.PI / 2 - getHeadingRadians() + Math.PI, getBattleFieldWidth(), getBattleFieldHeight());
+        frontWAll.set(WallDistance.pointAtClosestWall(getX(), getY(), Math.PI / 2 - getHeadingRadians(), getBattleFieldWidth(), getBattleFieldHeight()));
+        behindWall.set(WallDistance.pointAtClosestWall(getX(), getY(), Math.PI / 2 - getHeadingRadians() + Math.PI, getBattleFieldWidth(), getBattleFieldHeight()));
 
         Vector pos = new Vector(getX(), getY());
         double frontDst = frontWAll.sub(pos).getLength();
@@ -119,12 +122,7 @@ public class AnnMovementBot extends AdvancedRobot {
 
     @Override
     public void onPaint(Graphics2D g) {
-        g.setColor(Color.GREEN);
-        g.drawLine((int) getX(), (int) getY(), (int) frontWAll.x, (int) frontWAll.y);
-        g.fillOval((int) frontWAll.x - 12, (int) frontWAll.y - 12, 25, 25);
-        g.setColor(Color.RED);
-        g.drawLine((int) getX(), (int) getY(), (int) behindWall.x, (int) behindWall.y);
-        g.fillOval((int)behindWall.x - 12, (int)behindWall.y - 12, 25, 25);
+        debugPainter.paint(g);
     }
 
     @Override

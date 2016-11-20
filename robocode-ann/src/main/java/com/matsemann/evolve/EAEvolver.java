@@ -19,12 +19,12 @@ public class EAEvolver {
 //        EvolutionaryAlgorithm ea = new TrainEA(new );
 
         RobotEvaluator evaluator = new RobotEvaluator();
-        MLMethodGeneticAlgorithm train = new MLMethodGeneticAlgorithm(new MyMethodFactory(), evaluator, 25);
+        MLMethodGeneticAlgorithm train = new MLMethodGeneticAlgorithm(new MovementAnnNetworkFactory(), evaluator, 1);
 
 
 //        train.setThreadCount(1);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 1; i++) {
             System.out.println("----------------------------");
             System.out.println("----------------------------");
             System.out.println("NEW ITERATION: " + (i + 1));
@@ -63,7 +63,7 @@ public class EAEvolver {
 
     }
 
-    private static class MyMethodFactory implements MethodFactory {
+    private static class MovementAnnNetworkFactory implements MethodFactory {
         @Override
         public MLMethod factor() {
             BasicNetwork basicNetwork = new BasicNetwork();

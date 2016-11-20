@@ -10,6 +10,12 @@ public class Vector {
         this.y = y;
     }
 
+    public Vector set(Vector v) {
+        this.x = v.x;
+        this.y = v.y;
+        return this;
+    }
+
     public double getLength() {
         return Math.sqrt(x * x + y * y);
     }
