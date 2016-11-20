@@ -28,15 +28,16 @@ public class Gun {
     }
 
     public void pointAndShoot(Prediction prediction) {
-        double angleToTurn = getAngleToTurnGun(prediction);
+        Vector pos = new Vector(robot.getX(), robot.getY());
+
+        double angleToTurn = getAngleToTurnGun(pos, prediction.pos, robot.getGunHeadingRadians());
 
         robot.setTurnGunLeftRadians(angleToTurn);
         robot.setDebugProperty("Turning", angleToTurn + "");
 
-
         if (Math.abs(angleToTurn) < 0.087) {
             int timeDiff = (int) (prediction.tick - robot.getTime());
-            double firepower = getFirepowerForDistance(timeDiff, distanceTo(prediction.x, prediction.y));
+            double firepower = getFirepowerForDistance(timeDiff, prediction.pos.sub(pos).getLength());
             robot.setDebugProperty("firepower", firepower + "");
 
             if (firepower < 3.2) { // If it's much larger than three, we will miss as the power gets capped
@@ -45,14 +46,9 @@ public class Gun {
         }
     }
 
-    private double getAngleToTurnGun(Prediction prediction) {
-        double gunHeadingRadians = robot.getGunHeadingRadians();
-        return getAngleToTurnGun(robot.getX(), robot.getY(), prediction.x, prediction.y, gunHeadingRadians);
-    }
-
-    private double getAngleToTurnGun(double roboX, double roboY, double predX, double predY, double gunHeadingRadians) {
+    private double getAngleToTurnGun(Vector pos, Vector target, double gunHeadingRadians) {
         double gunAngle = Math.PI/2 - gunHeadingRadians;
-        double relativeAngle = Math.atan2(predY - roboY, predX - roboX);
+        double relativeAngle = Math.atan2(target.y - pos.y, target.x - pos.x);
         double totalAngle = relativeAngle - gunAngle;
         return Utils.normalRelativeAngle(totalAngle);
     }
@@ -61,12 +57,8 @@ public class Gun {
         return (20.0 / 3.0) - (distance / ((double) time * 3));
     }
 
-    private double distanceTo(double x, double y) {
-        return Math.sqrt( Math.pow(robot.getX() - x, 2) + Math.pow(robot.getY() - y, 2) );
-    }
-
     public static void main(String[] args) {
-        double angleToTurnGun = new Gun(null).getAngleToTurnGun(0, 0, 300, 300, Math.toRadians(270));
-        System.out.println(Math.toDegrees(angleToTurnGun));
+//        double angleToTurnGun = new Gun(null).getAngleToTurnGun(0, 0, 300, 300, Math.toRadians(270));
+//        System.out.println(Math.toDegrees(angleToTurnGun));
     }
 }

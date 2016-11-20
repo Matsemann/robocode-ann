@@ -1,5 +1,6 @@
 package com.matsemann.ann;
 
+import com.matsemann.util.Vector;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.basic.BasicMLData;
@@ -70,17 +71,6 @@ public class BasicAnn {
             return null;
         }
 
-//        int inputCount = network.getInputCount();
-//        BasicMLData input = new BasicMLData(inputCount);
-//
-//
-//        int c = 0;
-//        for (MovementData.Movement m : movements) {
-//            input.add(c++, xNorm.normalize(m.x));
-//            input.add(c++, yNorm.normalize(m.y));
-//            input.add(c++, headNorm.normalize(m.heading));
-//            input.add(c++, velNorm.normalize(m.velocity));
-//        }
 
         BasicMLData input = createInput(movements);
 
@@ -89,18 +79,8 @@ public class BasicAnn {
         MLData out = network.compute(input);
 
         double[] outData = out.getData();
-        return new Prediction(xNorm.deNormalize(outData[0]), yNorm.deNormalize(outData[1]), lastMovement.tick + PREDICTION_FUTURE * TICK_STEP);
+        return new Prediction(new Vector(xNorm.deNormalize(outData[0]), yNorm.deNormalize(outData[1])), lastMovement.tick + PREDICTION_FUTURE * TICK_STEP);
 
-//        for (int i = 0; i < PREDICTION_LENGTH; i++) {
-//            double preX = outData[i * 2];
-//            double preY = outData[i * 2 + 1];
-//
-//            Prediction prediction = new Prediction(xNorm.deNormalize(preX), yNorm.deNormalize(preY));
-//
-//            predictions.add(prediction);
-//        }
-//
-//        return predictions;
     }
 
     public static void main(String[] args) {
@@ -128,18 +108,17 @@ public class BasicAnn {
     }
 
     public static class Prediction {
-        public double x, y;
+        public Vector pos;
         public long tick;
 
-        public Prediction(double x, double y, long tick) {
-            this.x = x;
-            this.y = y;
+        public Prediction(Vector pos, long tick) {
+            this.pos = new Vector(pos);
             this.tick = tick;
         }
 
         @Override
         public String toString() {
-            return "Prediction{x=" + x + ", y=" + y + ", tick=" + tick + '}';
+            return "Pos: " + pos + ", at: " + tick;
         }
     }
 

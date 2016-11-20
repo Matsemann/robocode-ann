@@ -10,6 +10,10 @@ public class Vector {
         this.y = y;
     }
 
+    public Vector(Vector v) {
+        set(v);
+    }
+
     public Vector set(Vector v) {
         this.x = v.x;
         this.y = v.y;
@@ -22,5 +26,10 @@ public class Vector {
 
     public Vector sub(Vector v) {
         return new Vector(x - v.x, y - v.y);
+    }
+
+    @Override
+    public String toString() {
+        return "x: " + x + ", y: " + y;
     }
 }
