@@ -8,24 +8,24 @@ import robocode.control.snapshot.ITurnSnapshot;
 public class BattleListener extends BattleAdaptor {
     @Override
     public void onBattleStarted(BattleStartedEvent event) {
-        System.out.println("battle started");
-        super.onBattleStarted(event);
+//        System.out.println("battle started");
+//        super.onBattleStarted(event);
     }
 
     @Override
     public void onRoundEnded(RoundEndedEvent event) {
-        System.out.println("round ended");
-        super.onRoundEnded(event);
+//        System.out.println("round ended");
+//        super.onRoundEnded(event);
     }
 
     @Override
     public void onBattleFinished(BattleFinishedEvent event) {
-        System.out.println("Battle finished");
+//        System.out.println("Battle finished");
     }
 
     @Override
     public void onBattleCompleted(BattleCompletedEvent event) {
-        System.out.println("Battle completed");
+//        System.out.println("Battle completed");
     }
 
     @Override
@@ -40,7 +40,7 @@ public class BattleListener extends BattleAdaptor {
 
     @Override
     public void onRoundStarted(RoundStartedEvent event) {
-        System.out.println("Round started");
+//        System.out.println("Round started");
     }
 
     @Override

@@ -3,8 +3,11 @@ package com.matsemann.bot;
 import com.matsemann.evolve.MovementAnn;
 import com.matsemann.evolve.RobotEvaluator.MovementScore;
 import com.matsemann.util.Tracker;
+import com.matsemann.util.Vector;
+import com.matsemann.util.WallDistance;
 import robocode.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +18,21 @@ public class AnnMovementBot extends AdvancedRobot {
 
     Tracker tracker;
 
-    boolean hasTouchedWalls;
-    List<Double> distances = new ArrayList<>();
-    List<Double> speeds = new ArrayList<>();
+    static int wallTouches;
+    static List<Double> distances = new ArrayList<>();
+    static List<Double> speeds = new ArrayList<>();
+    static long ticks = 0;
 
-    double lastSeenX, lastSeenY;
+    Vector lastSeen = new Vector();
+    Vector lastSeenDiff = new Vector();
+
+    Vector frontWAll = new Vector();
+    Vector behindWall = new Vector();
+
+    double movedDistance;
+    Vector lastPos;
+    List<Vector> prevPositions = new ArrayList<>();
+    long lastPosition;
 
     public AnnMovementBot() {
         network = new MovementAnn();
@@ -43,73 +56,129 @@ public class AnnMovementBot extends AdvancedRobot {
 
         double angle = event.getBearingRadians() + getHeadingRadians();
 
-        lastSeenX = getX() + event.getDistance() * Math.sin(angle);
-        lastSeenY = getY() + event.getDistance() * Math.cos(angle);
+        lastSeenDiff = new Vector(event.getBearingRadians(), event.getDistance());
+
+        double x = getX() + event.getDistance() * Math.sin(angle);
+        double y = getY() + event.getDistance() * Math.cos(angle);
+        lastSeen = new Vector(x, y);
     }
 
     @Override
     public void onHitWall(HitWallEvent event) {
-        hasTouchedWalls = true;
+        wallTouches++;
     }
 
     @Override
     public void onStatus(StatusEvent e) {
         tracker.execute();
 
-        double distance = Math.sqrt( Math.pow(getX() - lastSeenX, 2) + Math.pow(getY() - lastSeenY, 2));
-        distances.add(distance);
+
+//        double distance = Math.sqrt( Math.pow(getX() - lastSeenX, 2) + Math.pow(getY() - lastSeenY, 2));
+
+
+        frontWAll = WallDistance.pointAtClosestWall(getX(), getY(), Math.PI / 2 - getHeadingRadians(), getBattleFieldWidth(), getBattleFieldHeight());
+        behindWall = WallDistance.pointAtClosestWall(getX(), getY(), Math.PI / 2 - getHeadingRadians() + Math.PI, getBattleFieldWidth(), getBattleFieldHeight());
+
+        Vector pos = new Vector(getX(), getY());
+        double frontDst = frontWAll.sub(pos).getLength();
+        double backDst = behindWall.sub(pos).getLength();
+
+        if (getTime() >= lastPosition + 5) {
+            lastPosition = getTime();
+            prevPositions.add(pos);
+
+            if (prevPositions.size() > 3) {
+                prevPositions.remove(0);
+            }
+        }
+
+        distances.add(pos.sub(lastSeen).getLength());
         speeds.add(getVelocity());
+        ticks++;
 
-        double[] action = network.getActions(getX(), getY(), getHeadingRadians(), lastSeenX, lastSeenY, 0);
+        double[] action = network.getActions(pos, getHeadingRadians(), getVelocity(), lastSeenDiff.x, lastSeenDiff.y, frontDst, backDst);
 
-        setDebugProperty("lastSeenX", lastSeenX + "");
-        setDebugProperty("lastSeenY", lastSeenY + "");
+        setDebugProperty("lastSeenX", lastSeen.x + "");
+        setDebugProperty("lastSeenY", lastSeen.y + "");
 
         setDebugProperty("turn", action[0] + "");
         setDebugProperty("ahead", action[1] + "");
 
         setTurnRightRadians(action[0]);
         setAhead(action[1]);
+
+
+
+        if (lastPos != null) {
+            movedDistance += lastPos.sub(pos).getLength();
+        }
+        lastPos = pos;
+
+
+    }
+
+    @Override
+    public void onPaint(Graphics2D g) {
+        g.setColor(Color.GREEN);
+        g.drawLine((int) getX(), (int) getY(), (int) frontWAll.x, (int) frontWAll.y);
+        g.fillOval((int) frontWAll.x - 12, (int) frontWAll.y - 12, 25, 25);
+        g.setColor(Color.RED);
+        g.drawLine((int) getX(), (int) getY(), (int) behindWall.x, (int) behindWall.y);
+        g.fillOval((int)behindWall.x - 12, (int)behindWall.y - 12, 25, 25);
     }
 
     @Override
     public void onBattleEnded(BattleEndedEvent event) {
         System.out.println("Battle ended");
 
-        int count6 = 0;
+
+        double avgSpeed = 0;
         for (Double speed : speeds) {
-            if (speed >= 6) {
-                count6++;
-            }
+            avgSpeed += Math.abs(speed);
         }
+        avgSpeed = avgSpeed / (double) speeds.size();
 
-        double percentFullSpeed = (double) count6 / (double) speeds.size();
-
-        double speedMultiplier = percentFullSpeed;
 
         double wallMultiplier = 1;
-        if (hasTouchedWalls) {
-//            wallMultiplier = 0.1;
+
+        wallMultiplier = (100 - wallTouches) / 100.0;
+        if (wallMultiplier < 0) {
+            wallMultiplier = 0.01;
         }
 
 //        double target = 350.0;
-        double target = 50.0;
+        double target = 300.0;
 
         double sumError = 0;
         for (Double distance : distances) {
-//            sumError += Math.pow(target - distance, 2);
-            sumError += Math.abs(target - distance);
+            sumError += Math.pow(target - distance, 2);
+//            sumError += Math.abs(target - distance);
         }
         double error = sumError / distances.size();
 
 //        double totalScore = (200 - error / 2) * wallMultiplier * speedMultiplier;
-        double totalScore = error / 1000;
+//        double totalScore = error / 1000;
+
+//        double totalScore = 100 * speedMultiplier * wallMultiplier;
+
+//        double totalScore = movedDistance;
+//        double totalScore = (error + wallTouches*250) / (avgSpeed / 2);
+        double totalScore = error;
+
+        if (avgSpeed < 2.5) {
+            totalScore = totalScore * 10;
+        }
 
         MovementScore score = new MovementScore();
         score.score = totalScore;
+        score.ticks = ticks;
         score.save();
 
         System.out.println("saved");
+
+
+        distances = new ArrayList<>();
+        speeds = new ArrayList<>();
     }
 
 }

@@ -33,7 +33,8 @@ public class BasicAnn {
     public static final NormalizedField headNorm = new NormalizedField(NormalizationAction.Normalize, "head", 2 * Math.PI, 0, 1, -1);
     public static final NormalizedField velNorm = new NormalizedField(NormalizationAction.Normalize, "vel", 8, -8, 1, -1);
 
-    public static final NormalizedField turnNorm = new NormalizedField(NormalizationAction.Normalize, "head", Math.PI/4, -Math.PI/4, 1, -1);
+    public static final NormalizedField turnNorm = new NormalizedField(NormalizationAction.Normalize, "turn", Math.PI/16, -Math.PI/16, 1, -1);
+    public static final NormalizedField angleNorm = new NormalizedField(NormalizationAction.Normalize, "angle", Math.PI, -Math.PI, 1, -1);
 
 
     public static final String FILE_NAME = "predict.eg";
