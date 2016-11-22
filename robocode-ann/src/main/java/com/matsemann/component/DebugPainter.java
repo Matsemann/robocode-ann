@@ -1,5 +1,8 @@
-package com.matsemann.util;
+package com.matsemann.component;
 
+import com.matsemann.util.OpponentMoves;
+import com.matsemann.util.Util;
+import com.matsemann.util.Vector;
 import robocode.AdvancedRobot;
 
 import java.awt.*;
@@ -30,7 +33,7 @@ public class DebugPainter {
         drawWall(g, pos, wallDistance.wallIntersections[1], new Color(71, 182, 108));
         drawWall(g, pos, wallDistance.wallIntersections[2], new Color(183, 97, 69));
         drawWall(g, pos, wallDistance.wallIntersections[3], new Color(183, 97, 69));
-        drawToOpponent(g, pos, opponent.pos);
+        drawOpponentTargetCircle(g, pos, opponent.pos);
     }
 
     private void drawWall(Graphics2D g, Vector pos, Vector wall, Color c) {
@@ -47,7 +50,7 @@ public class DebugPainter {
         drawCircle(g, wall, 10);
     }
 
-    private void drawToOpponent(Graphics2D g, Vector pos, Vector opponentPos) {
+    private void drawOpponentTargetCircle(Graphics2D g, Vector pos, Vector opponentPos) {
         Color c = new Color(0, 0, 0, 0.2f);
 
         double outterRadius = TARGET_DISTANCE + 75;

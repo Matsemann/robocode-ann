@@ -2,7 +2,7 @@ package com.matsemann.bot;
 
 import com.matsemann.ann.BasicAnn;
 import com.matsemann.ann.MovementData;
-import com.matsemann.util.Tracker;
+import com.matsemann.component.Tracker;
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
 import robocode.StatusEvent;

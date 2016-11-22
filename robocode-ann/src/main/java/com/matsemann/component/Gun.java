@@ -1,6 +1,7 @@
-package com.matsemann.util;
+package com.matsemann.component;
 
 import com.matsemann.ann.BasicAnn.Prediction;
+import com.matsemann.util.Vector;
 import robocode.AdvancedRobot;
 import robocode.util.Utils;
 

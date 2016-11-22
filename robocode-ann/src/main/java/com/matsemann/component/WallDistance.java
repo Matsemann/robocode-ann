@@ -1,5 +1,6 @@
-package com.matsemann.util;
+package com.matsemann.component;
 
+import com.matsemann.util.Vector;
 import robocode.AdvancedRobot;
 import robocode.util.Utils;
 
@@ -10,8 +11,8 @@ public class WallDistance {
     private static final double angleFromFront = PI_8;
     private AdvancedRobot robot;
 
-    Vector[] wallIntersections = new Vector[4];
-    double[] lengths = new double[4];
+    public Vector[] wallIntersections = new Vector[4];
+    public double[] lengths = new double[4];
 
     public WallDistance(AdvancedRobot robot) {
         this.robot = robot;

@@ -1,13 +1,13 @@
 package com.matsemann.bot;
 
-import com.matsemann.Starter;
-import com.matsemann.ann.BasicAnn;
 import com.matsemann.ann.MovementData;
-import com.matsemann.util.Tracker;
+import com.matsemann.component.Tracker;
+import com.matsemann.component.WallDistance;
 import com.matsemann.util.Vector;
-import com.matsemann.util.WallDistance;
-import robocode.*;
-import robocode.util.Utils;
+import robocode.AdvancedRobot;
+import robocode.RoundEndedEvent;
+import robocode.ScannedRobotEvent;
+import robocode.StatusEvent;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

@@ -1,8 +1,12 @@
 package com.matsemann.bot;
 
+import com.matsemann.component.DebugPainter;
+import com.matsemann.component.Tracker;
+import com.matsemann.component.WallDistance;
 import com.matsemann.evolve.MovementAnn;
 import com.matsemann.evolve.MovementScore;
-import com.matsemann.util.*;
+import com.matsemann.util.OpponentMoves;
+import com.matsemann.util.RobotMoves;
 import robocode.*;
 
 import java.awt.*;

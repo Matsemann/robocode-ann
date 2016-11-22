@@ -1,4 +1,4 @@
-package com.matsemann.util;
+package com.matsemann.component;
 
 import robocode.AdvancedRobot;
 
