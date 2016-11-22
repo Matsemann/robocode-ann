@@ -1,10 +1,12 @@
 package com.matsemann.evolve;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MovementScore implements Serializable {
@@ -27,7 +29,6 @@ public class MovementScore implements Serializable {
         }
     }
 
-    //Loads data from a file serialized by Java built-in serialization.
     public static MovementScore load() {
 
         try {
@@ -40,18 +41,5 @@ public class MovementScore implements Serializable {
             throw new RuntimeException(e);
         }
 
-    }
-
-    public static void main(String[] args) {
-        MovementScore s1 = new MovementScore();
-        s1.score = Math.random();
-        s1.ticks = 133333337.1337;
-        save(s1);
-
-        MovementScore s2 = load();
-
-        if (s1.score != s2.score) {
-            throw new RuntimeException("GAHH");
-        }
     }
 }
