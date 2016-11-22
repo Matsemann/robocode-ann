@@ -1,6 +1,7 @@
 package com.matsemann.evolve;
 
-import com.matsemann.util.Vector;
+import com.matsemann.util.OpponentMoves;
+import com.matsemann.util.RobotMoves;
 import org.encog.ml.MLRegression;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.basic.BasicMLData;
@@ -24,22 +25,18 @@ public class MovementAnn {
         this.network = network;
     }
 
-    public double[] getActions(Vector pos, double heading, double velocity, double headingToOther, double distanceToOther, double[] wallDistances) {
-
+    public double[] getActions(RobotMoves robotMoves, OpponentMoves opponentMove, double[] wallDistances) {
         BasicMLData input = new BasicMLData(network.getInputCount());
         int c = 0;
-//        for (Vector pos : prevPositions) {
-            input.setData(c++, xNorm.normalize(pos.x));
-            input.setData(c++, yNorm.normalize(pos.y));
-//        }
 
-        input.setData(c++, headNorm.normalize(heading));
-        input.setData(c++, velNorm.normalize(velocity));
+        input.setData(c++, xNorm.normalize(robotMoves.pos.x));
+        input.setData(c++, yNorm.normalize(robotMoves.pos.y));
+        input.setData(c++, headNorm.normalize(robotMoves.heading));
+        input.setData(c++, velNorm.normalize(robotMoves.velocity));
 
-        input.setData(c++, angleNorm.normalize(headingToOther));
-        input.setData(c++, xNorm.normalize(distanceToOther));
-//        input.setData(c++, xNorm.normalize(otherX));
-//        input.setData(c++, yNorm.normalize(otherY));
+        input.setData(c++, angleNorm.normalize(opponentMove.relativeHeading));
+        input.setData(c++, xNorm.normalize(opponentMove.relativeDistance));
+
         input.setData(c++, xNorm.normalize(wallDistances[0]));
         input.setData(c++, xNorm.normalize(wallDistances[1]));
         input.setData(c++, xNorm.normalize(wallDistances[2]));
@@ -47,9 +44,9 @@ public class MovementAnn {
 
         MLData output = network.compute(input);
 
-        return new double[] {
-            turnNorm.deNormalize(output.getData(0)),
-            velNorm.deNormalize(output.getData(1))
+        return new double[]{
+                turnNorm.deNormalize(output.getData(0)),
+                velNorm.deNormalize(output.getData(1))
         };
     }
 

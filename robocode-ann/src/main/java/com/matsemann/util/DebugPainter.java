@@ -5,6 +5,7 @@ import robocode.AdvancedRobot;
 import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.util.List;
 
 import static com.matsemann.evolve.MovementAnn.TARGET_DISTANCE;
 
@@ -13,22 +14,23 @@ public class DebugPainter {
 
     private final AdvancedRobot robot;
     private WallDistance wallDistance;
-    private final Vector opponentPos;
+    private List<OpponentMoves> opponentPos;
 
-    public DebugPainter(AdvancedRobot robot, WallDistance wallDistance, Vector opponentPos) {
+    public DebugPainter(AdvancedRobot robot, WallDistance wallDistance, List<OpponentMoves> opponentPos) {
         this.robot = robot;
         this.wallDistance = wallDistance;
         this.opponentPos = opponentPos;
     }
 
     public void paint(Graphics2D g) {
+        OpponentMoves opponent = Util.getLastOr(opponentPos, OpponentMoves.NOTHING);
         Vector pos = new Vector(robot.getX(), robot.getY());
 
         drawWall(g, pos, wallDistance.wallIntersections[0], new Color(71, 182, 108));
         drawWall(g, pos, wallDistance.wallIntersections[1], new Color(71, 182, 108));
         drawWall(g, pos, wallDistance.wallIntersections[2], new Color(183, 97, 69));
         drawWall(g, pos, wallDistance.wallIntersections[3], new Color(183, 97, 69));
-        drawToOpponent(g, pos);
+        drawToOpponent(g, pos, opponent.pos);
     }
 
     private void drawWall(Graphics2D g, Vector pos, Vector wall, Color c) {
@@ -45,7 +47,7 @@ public class DebugPainter {
         drawCircle(g, wall, 10);
     }
 
-    private void drawToOpponent(Graphics2D g, Vector pos) {
+    private void drawToOpponent(Graphics2D g, Vector pos, Vector opponentPos) {
         Color c = new Color(0, 0, 0, 0.2f);
 
         double outterRadius = TARGET_DISTANCE + 75;

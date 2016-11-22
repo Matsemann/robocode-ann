@@ -2,10 +2,7 @@ package com.matsemann.bot;
 
 import com.matsemann.evolve.MovementAnn;
 import com.matsemann.evolve.MovementScore;
-import com.matsemann.util.DebugPainter;
-import com.matsemann.util.Tracker;
-import com.matsemann.util.Vector;
-import com.matsemann.util.WallDistance;
+import com.matsemann.util.*;
 import robocode.*;
 
 import java.awt.*;
@@ -14,6 +11,7 @@ import java.util.List;
 
 import static com.matsemann.evolve.MovementAnn.TARGET_DISTANCE;
 import static com.matsemann.evolve.MovementScore.save;
+import static com.matsemann.util.Util.getLastOr;
 
 public class AnnMovementBot extends AdvancedRobot {
 
@@ -23,18 +21,11 @@ public class AnnMovementBot extends AdvancedRobot {
     DebugPainter debugPainter;
     WallDistance wallDistance;
 
+    List<RobotMoves> robotMoves = new ArrayList<>();
+    List<OpponentMoves> opponentMoves = new ArrayList<>();
+
     static int wallTouches;
     static List<Double> distances = new ArrayList<>();
-    static List<Double> speeds = new ArrayList<>();
-    static long ticks = 0;
-
-    final Vector lastSeen = new Vector();
-    final Vector lastSeenDiff = new Vector();
-
-    double movedDistance;
-    Vector lastPos;
-    List<Vector> prevPositions = new ArrayList<>();
-    long lastPosition;
 
     public AnnMovementBot() {
         network = new MovementAnn();
@@ -42,7 +33,7 @@ public class AnnMovementBot extends AdvancedRobot {
 
         wallDistance = new WallDistance(this);
         tracker = new Tracker(this);
-        debugPainter = new DebugPainter(this, wallDistance, lastSeen);
+        debugPainter = new DebugPainter(this, wallDistance, opponentMoves);
     }
 
     @Override
@@ -58,13 +49,7 @@ public class AnnMovementBot extends AdvancedRobot {
     public void onScannedRobot(ScannedRobotEvent event) {
         tracker.onScan(event);
 
-        double angle = event.getBearingRadians() + getHeadingRadians();
-
-        lastSeenDiff.set(event.getBearingRadians(), event.getDistance());
-
-        double x = getX() + event.getDistance() * Math.sin(angle);
-        double y = getY() + event.getDistance() * Math.cos(angle);
-        lastSeen.set(x, y);
+        opponentMoves.add(OpponentMoves.fromScan(this, event));
     }
 
     @Override
@@ -76,40 +61,21 @@ public class AnnMovementBot extends AdvancedRobot {
     public void onStatus(StatusEvent e) {
         tracker.execute();
 
-        Vector pos = new Vector(getX(), getY());
+        RobotMoves lastMove = RobotMoves.fromRobot(this);
+        robotMoves.add(lastMove);
+
+        OpponentMoves lastOpponentMove = getLastOr(opponentMoves, OpponentMoves.NOTHING);
 
         double[] wallDistances = wallDistance.calculateWallDistances();
-        double[] action = network.getActions(pos, getHeadingRadians(), getVelocity(), lastSeenDiff.x, lastSeenDiff.y, wallDistances);
+        double[] action = network.getActions(lastMove, lastOpponentMove, wallDistances);
 
         setTurnRightRadians(action[0]);
         setAhead(action[1]);
 
-        // Other stuff
-
-
         setDebugProperty("turn", action[0] + "");
         setDebugProperty("ahead", action[1] + "");
 
-        if (getTime() >= lastPosition + 5) {
-            lastPosition = getTime();
-            prevPositions.add(pos);
-
-            if (prevPositions.size() > 3) {
-                prevPositions.remove(0);
-            }
-        }
-
-        distances.add(pos.sub(lastSeen).getLength());
-        speeds.add(getVelocity());
-        ticks++;
-
-        if (lastPos != null) {
-            movedDistance += lastPos.sub(pos).getLength();
-        }
-        lastPos = pos;
-
-
-
+        distances.add(lastMove.pos.sub(lastOpponentMove.pos).getLength());
     }
 
     @Override
@@ -123,10 +89,10 @@ public class AnnMovementBot extends AdvancedRobot {
 
 
         double avgSpeed = 0;
-        for (Double speed : speeds) {
-            avgSpeed += Math.abs(speed);
+        for (RobotMoves move : robotMoves) {
+            avgSpeed += Math.abs(move.velocity);
         }
-        avgSpeed = avgSpeed / (double) speeds.size();
+        avgSpeed = avgSpeed / (double) robotMoves.size();
 
 
         double wallMultiplier = 1;
@@ -164,14 +130,11 @@ public class AnnMovementBot extends AdvancedRobot {
 
         MovementScore score = new MovementScore();
         score.score = totalScore;
-        score.ticks = ticks;
+        score.ticks = event.getTime();
         save(score);
 
         System.out.println("saved");
 
-
-        distances = new ArrayList<>();
-        speeds = new ArrayList<>();
     }
 
 }
