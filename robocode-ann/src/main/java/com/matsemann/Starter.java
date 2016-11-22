@@ -21,7 +21,8 @@ public class Starter {
         engine.addBattleListener(new BattleListener());
         engine.setVisible(true);
 
-        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.ObserverBot*, sample.Walls");
+//        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.ObserverBot*, sample.Walls");
+        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnMovementBot*, steffen.PredictionBot*");
 //        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnTestBot*, sample.Walls*");
 //        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.LiveAnnTestBot*, sample.Crazy");
 

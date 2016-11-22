@@ -27,7 +27,7 @@ public class EAEvolver {
 
         RobotEvaluator evaluator = new RobotEvaluator("com.matsemann.bot.AnnMovementBot*", Arrays.asList("sample.Walls", "sample.Crazy", "steffen.PredictionBot*"));
         int population = 20;
-        int generations = 15;
+        int generations = 1;
 
         MLMethodGeneticAlgorithm train = new MLMethodGeneticAlgorithm(new MovementAnnNetworkFactory(), evaluator, population);
 

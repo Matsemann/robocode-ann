@@ -3,6 +3,8 @@ package com.matsemann.util;
 import robocode.AdvancedRobot;
 
 import java.awt.*;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
 
 import static com.matsemann.evolve.MovementAnn.TARGET_DISTANCE;
 
@@ -40,25 +42,28 @@ public class DebugPainter {
 
         g.setColor(c);
         drawLine(g, pos, wall, lineWidth);
-        drawCircle(g, wall, 20);
+        drawCircle(g, wall, 10);
     }
 
     private void drawToOpponent(Graphics2D g, Vector pos) {
-        double distance = pos.sub(opponentPos).getLength();
-        double lineWidth = .6;
-        Color c = new Color(227, 228, 3);
+        Color c = new Color(0, 0, 0, 0.2f);
 
-        if (distance > TARGET_DISTANCE + 100 || distance < TARGET_DISTANCE - 100) {
-            lineWidth = 3;
-            c = new Color(32, 31, 9);
+        double outterRadius = TARGET_DISTANCE + 75;
+        double innerRadius = TARGET_DISTANCE - 75;
+        double distance = pos.sub(opponentPos).getLength();
+
+        if (distance > outterRadius || distance < innerRadius) {
+            c = new Color(0.2f, 0.2f, 0.2f, 0.2f);
         }
         g.setColor(c);
-        drawLine(g, pos, opponentPos, lineWidth);
-        drawCircle(g, opponentPos, 5);
+        Area outter = new Area(new Ellipse2D.Double(pos.x - outterRadius, pos.y - outterRadius, outterRadius*2, outterRadius*2));
+        Area inner = new Area(new Ellipse2D.Double(pos.x - innerRadius, pos.y - innerRadius, innerRadius*2, innerRadius*2));
+        outter.subtract(inner);
+        g.fill(outter);
     }
 
     private void drawCircle(Graphics2D g, Vector pos, int r) {
-        g.fillOval((int) pos.x - r/2, (int) pos.y - r/2, r, r);
+        g.fillOval((int) pos.x - r, (int) pos.y - r, r*2, r*2);
     }
 
     private void drawLine(Graphics2D g, Vector pos1, Vector pos2, double width) {

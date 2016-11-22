@@ -31,11 +31,6 @@ public class AnnMovementBot extends AdvancedRobot {
     final Vector lastSeen = new Vector();
     final Vector lastSeenDiff = new Vector();
 
-    final Vector frontWallLeft = new Vector();
-    final Vector frontWallRight = new Vector();
-    final Vector behindWallLeft = new Vector();
-    final Vector behindWallRight = new Vector();
-
     double movedDistance;
     Vector lastPos;
     List<Vector> prevPositions = new ArrayList<>();
