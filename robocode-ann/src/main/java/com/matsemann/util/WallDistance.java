@@ -1,9 +1,43 @@
 package com.matsemann.util;
 
+import robocode.AdvancedRobot;
 import robocode.util.Utils;
+
+import static com.matsemann.util.MathUtil.*;
 
 public class WallDistance {
 
+    private static final double angleFromFront = PI_8;
+    private AdvancedRobot robot;
+
+    Vector[] wallIntersections = new Vector[4];
+    double[] lengths = new double[4];
+
+    public WallDistance(AdvancedRobot robot) {
+        this.robot = robot;
+    }
+
+    public double[] calculateWallDistances() {
+        Vector pos = new Vector(robot.getX(), robot.getY());
+        double heading = robot.getHeadingRadians();
+        double width = robot.getBattleFieldWidth();
+        double height = robot.getBattleFieldHeight();
+        double x = robot.getX();
+        double y = robot.getY();
+
+        double angle = PI_2 - heading;
+
+        wallIntersections[0] = WallDistance.pointAtClosestWall(x, y, angle + angleFromFront, width, height);
+        wallIntersections[1] = WallDistance.pointAtClosestWall(x, y, angle - angleFromFront, width, height);
+
+        wallIntersections[2] = WallDistance.pointAtClosestWall(x, y, angle + angleFromFront + PI, width, height);
+        wallIntersections[3] = WallDistance.pointAtClosestWall(x, y, angle - angleFromFront + PI, width, height);
+
+        for (int i = 0; i < 4; i++) {
+            lengths[i] = wallIntersections[i].sub(pos).getLength();
+        }
+        return lengths;
+    }
 
     public static Vector pointAtClosestWall(double x, double y, double heading, double width, double height) {
 
@@ -40,15 +74,5 @@ public class WallDistance {
         return new Vector();
     }
 
-    public static void main(String[] args) {
-
-//        System.out.println(distanceToClosestWall(0, 100, 0, 800, 600) + " == 600");
-//        System.out.println(distanceToClosestWall(100, 100, Math.PI / 4, 800, 600) + " == 600, top crossing");
-//        System.out.println(distanceToClosestWall(100, 100, -Math.PI / 4, 800, 600) + " == 200, bottom crossing");
-//        System.out.println(distanceToClosestWall(100, 100, (3 * Math.PI) / 4, 800, 600) + " == 200, left crossing");
-//        System.out.println(distanceToClosestWall(500, 100, (3 * Math.PI) / 4, 800, 600) + " == 0, left/top crossing");
-//        System.out.println(distanceToClosestWall(500, 100, Math.PI / 4, 800, 600) + " == 400, left/top crossing");
-
-    }
 
 }

@@ -1,16 +1,12 @@
 package com.matsemann.evolve;
 
-import com.matsemann.ann.BasicAnn;
 import com.matsemann.util.Vector;
 import org.encog.ml.MLRegression;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.basic.BasicMLData;
-import org.encog.neural.neat.NEATNetwork;
-import org.encog.neural.networks.BasicNetwork;
 import org.encog.persist.EncogDirectoryPersistence;
 
-import java.io.*;
-import java.util.List;
+import java.io.File;
 
 import static com.matsemann.ann.BasicAnn.*;
 
@@ -19,6 +15,8 @@ public class MovementAnn {
     public static final String FILE_NAME = "movement.eg";
     private MLRegression network;
 
+    public static final double TARGET_DISTANCE = 350;
+
     public MovementAnn() {
     }
 
@@ -26,7 +24,7 @@ public class MovementAnn {
         this.network = network;
     }
 
-    public double[] getActions(Vector pos, double heading, double velocity, double headingToOther, double distanceToOther, double frontwallDistance, double backwallDistance) {
+    public double[] getActions(Vector pos, double heading, double velocity, double headingToOther, double distanceToOther, double[] wallDistances) {
 
         BasicMLData input = new BasicMLData(network.getInputCount());
         int c = 0;
@@ -42,8 +40,10 @@ public class MovementAnn {
         input.setData(c++, xNorm.normalize(distanceToOther));
 //        input.setData(c++, xNorm.normalize(otherX));
 //        input.setData(c++, yNorm.normalize(otherY));
-        input.setData(c++, xNorm.normalize(frontwallDistance));
-        input.setData(c++, xNorm.normalize(backwallDistance));
+        input.setData(c++, xNorm.normalize(wallDistances[0]));
+        input.setData(c++, xNorm.normalize(wallDistances[1]));
+        input.setData(c++, xNorm.normalize(wallDistances[2]));
+        input.setData(c++, xNorm.normalize(wallDistances[3]));
 
         MLData output = network.compute(input);
 

@@ -70,7 +70,7 @@ public class LiveAnnTestBot extends AdvancedRobot {
     public void onPaint(Graphics2D g) {
         g.setColor(Color.RED);
         for (BasicAnn.Prediction p : predictions) {
-            g.fillOval((int) p.x, (int) p.y, 7, 7);
+//            g.fillOval((int) p.x, (int) p.y, 7, 7);
         }
 
         if (movementData.movements.size() > WINDOW_SIZE) {

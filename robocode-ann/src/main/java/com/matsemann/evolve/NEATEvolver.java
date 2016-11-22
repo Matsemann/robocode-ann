@@ -8,7 +8,7 @@ import org.encog.neural.neat.NEATNetwork;
 public class NEATEvolver {
 
     public static void main(String[] args) {
-        RobotEvaluator evaluator = new RobotEvaluator();
+        RobotEvaluator evaluator = new RobotEvaluator(null, null);
         TrainEA trainEA = NEATUtil.constructNEATTrainer(evaluator, 8, 2, 40);
 
         long start = System.currentTimeMillis();

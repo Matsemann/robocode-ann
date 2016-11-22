@@ -3,8 +3,8 @@ package com.matsemann.bot;
 import com.matsemann.ann.BasicAnn;
 import com.matsemann.ann.MovementData;
 import com.matsemann.util.Gun;
-import com.matsemann.util.Tracker;
 import com.matsemann.util.RobotPainter;
+import com.matsemann.util.Tracker;
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
 import robocode.StatusEvent;
@@ -102,7 +102,7 @@ public class AnnTestBot extends AdvancedRobot {
         long now = getTime();
         for (BasicAnn.Prediction p : predictions) {
             int size = (int) (p.tick - now)/2 + 5;
-            g.fillOval((int) p.x - size/2, (int) p.y - size/2, size, size);
+            g.fillOval((int) p.pos.x - size/2, (int) p.pos.y - size/2, size, size);
         }
 
         if (movementData.movements.size() > WINDOW_SIZE) {

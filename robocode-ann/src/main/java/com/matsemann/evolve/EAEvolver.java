@@ -9,22 +9,32 @@ import org.encog.ml.genetic.MLMethodGeneticAlgorithm;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class EAEvolver {
 
     public static void main(String[] args) {
+        System.setProperty("NOSECURITY", "true");
+
+        // Make the robo code scenarios equal for everyone
+        long seed = new Random().nextLong();
+//        seed = 1; // 24191.54670550626 - 28901 ticks
+        System.out.println("Seed is: " + seed);
+        System.setProperty("RANDOMSEED", seed + "");
 
 
-//        EvolutionaryAlgorithm ea = new TrainEA(new );
+        RobotEvaluator evaluator = new RobotEvaluator("com.matsemann.bot.AnnMovementBot*", Arrays.asList("sample.Walls", "sample.Crazy", "steffen.PredictionBot*"));
+        int population = 20;
+        int generations = 15;
 
-        RobotEvaluator evaluator = new RobotEvaluator();
-        MLMethodGeneticAlgorithm train = new MLMethodGeneticAlgorithm(new MovementAnnNetworkFactory(), evaluator, 1);
+        MLMethodGeneticAlgorithm train = new MLMethodGeneticAlgorithm(new MovementAnnNetworkFactory(), evaluator, population);
 
 
-//        train.setThreadCount(1);
+        train.setThreadCount(1);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < generations; i++) {
             System.out.println("----------------------------");
             System.out.println("----------------------------");
             System.out.println("NEW ITERATION: " + (i + 1));
@@ -67,8 +77,8 @@ public class EAEvolver {
         @Override
         public MLMethod factor() {
             BasicNetwork basicNetwork = new BasicNetwork();
-            basicNetwork.addLayer(new BasicLayer(8));
-//            basicNetwork.addLayer(new BasicLayer(6));
+            basicNetwork.addLayer(new BasicLayer(10));
+//            basicNetwork.addLayer(new BasicLayer(5));
             basicNetwork.addLayer(new BasicLayer(2));
             basicNetwork.getStructure().finalizeStructure();
             basicNetwork.reset();

@@ -1,12 +1,11 @@
 package com.matsemann;
 
-import com.matsemann.bot.ObserverBot;
-import net.sf.robocode.battle.Battle;
-import net.sf.robocode.security.HiddenAccess;
-import robocode.control.*;
+import robocode.control.BattleSpecification;
+import robocode.control.BattlefieldSpecification;
+import robocode.control.RobocodeEngine;
+import robocode.control.RobotSpecification;
 
 import java.io.File;
-import java.net.URL;
 
 /**
  * Created by mats kruger svensson on 07/11/16.
@@ -23,7 +22,7 @@ public class Starter {
         engine.setVisible(true);
 
         RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.ObserverBot*, sample.Walls");
-//        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnTestBot*, steffen.PredictionBot*");
+//        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.AnnTestBot*, sample.Walls*");
 //        RobotSpecification[] robots = engine.getLocalRepository("com.matsemann.bot.LiveAnnTestBot*, sample.Crazy");
 
         BattlefieldSpecification battleField = new BattlefieldSpecification();
